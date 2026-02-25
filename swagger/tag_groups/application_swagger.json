@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.4",
   "info": {
-    "title": "Chatwoot",
-    "description": "This is the API documentation for Chatwoot server.",
+    "title": "Encarta",
+    "description": "This is the API documentation for Encarta server.",
     "version": "1.1.0",
     "termsOfService": "https://www.chatwoot.com/terms-of-service/",
     "contact": {
@@ -2476,7 +2476,7 @@
                         "id": 37,
                         "avatar_url": "https://example.com/avatar.png",
                         "channel_id": 1,
-                        "name": "Chatwoot",
+                        "name": "Encarta",
                         "channel_type": "Channel::WebWidget",
                         "greeting_enabled": true,
                         "widget_color": "#1F93FF",
@@ -2585,7 +2585,7 @@
                     "account_id": 123,
                     "inbox": {
                       "id": 123,
-                      "name": "Chatwoot",
+                      "name": "Encarta",
                       "website_url": "chatwoot.com",
                       "channel_type": "Channel::WebWidget",
                       "avatar_url": "https://example.com/avatar.png",
@@ -2602,7 +2602,7 @@
                       "enable_email_collect": true,
                       "csat_survey_enabled": true,
                       "timezone": "America/Los_Angeles",
-                      "business_name": "Chatwoot",
+                      "business_name": "Encarta",
                       "hmac_mandatory": true
                     },
                     "logo": {
@@ -6446,7 +6446,7 @@
             "userApiKey": []
           }
         ],
-        "description": "Get conversation counts grouped by channel type and status for a given date range.\nReturns statistics for each channel type including open, resolved, pending, snoozed, and total conversation counts.\n\n**Note:** This API endpoint is available only in Chatwoot version 4.10.0 and above. The date range is limited to a maximum of 6 months.\n",
+        "description": "Get conversation counts grouped by channel type and status for a given date range.\nReturns statistics for each channel type including open, resolved, pending, snoozed, and total conversation counts.\n\n**Note:** This API endpoint is available only in Encarta version 4.10.0 and above. The date range is limited to a maximum of 6 months.\n",
         "responses": {
           "200": {
             "description": "Success",
@@ -6712,7 +6712,7 @@
             "userApiKey": []
           }
         ],
-        "description": "Get the distribution of first response times grouped by channel type.\nReturns conversation counts in different time buckets (0-1h, 1-4h, 4-8h, 8-24h, 24h+) for each channel type.\n\n**Note:** This API endpoint is available only in Chatwoot version 4.11.0 and above.\n",
+        "description": "Get the distribution of first response times grouped by channel type.\nReturns conversation counts in different time buckets (0-1h, 1-4h, 4-8h, 8-24h, 24h+) for each channel type.\n\n**Note:** This API endpoint is available only in Encarta version 4.11.0 and above.\n",
         "responses": {
           "200": {
             "description": "Success",
@@ -6792,7 +6792,7 @@
             "userApiKey": []
           }
         ],
-        "description": "Get a matrix showing the count of conversations for each inbox-label combination.\nReturns a list of inboxes, labels, and a 2D matrix where each cell contains the count of conversations\nin a specific inbox that have a specific label applied.\n\n**Note:** This API endpoint is available only in Chatwoot version 4.11.0 and above.\n",
+        "description": "Get a matrix showing the count of conversations for each inbox-label combination.\nReturns a list of inboxes, labels, and a 2D matrix where each cell contains the count of conversations\nin a specific inbox that have a specific label applied.\n\n**Note:** This API endpoint is available only in Encarta version 4.11.0 and above.\n",
         "responses": {
           "200": {
             "description": "Success",
@@ -6850,7 +6850,7 @@
             "userApiKey": []
           }
         ],
-        "description": "Get the count of outgoing messages grouped by a specified entity (agent, team, inbox, or label).\nWhen grouped by agent, messages sent by bots (AgentBot, Captain::Assistant) are excluded.\n\n**Note:** This API endpoint is available only in Chatwoot version 4.11.0 and above.\n",
+        "description": "Get the count of outgoing messages grouped by a specified entity (agent, team, inbox, or label).\nWhen grouped by agent, messages sent by bots (AgentBot, Captain::Assistant) are excluded.\n\n**Note:** This API endpoint is available only in Encarta version 4.11.0 and above.\n",
         "parameters": [
           {
             "in": "query",
@@ -7846,7 +7846,7 @@
               "busy",
               "offline"
             ],
-            "description": "The availability status of the agent computed by Chatwoot."
+            "description": "The availability status of the agent computed by Encarta."
           },
           "auto_offline": {
             "type": "boolean",
@@ -8374,7 +8374,7 @@
             "properties": {
               "latest_chatwoot_version": {
                 "type": "string",
-                "description": "Latest version of Chatwoot available",
+                "description": "Latest version of Encarta available",
                 "example": "3.0.0"
               },
               "subscribed_features": {
@@ -9344,7 +9344,7 @@
                     "type": "object",
                     "description": "The processed param values for template variables in template",
                     "example": {
-                      "1": "Chatwoot"
+                      "1": "Encarta"
                     }
                   }
                 }
@@ -11818,7 +11818,7 @@
         "schema": {
           "type": "string"
         },
-        "description": "Id of the session for which the conversation is created.\n\n\n\n Source Ids can be obtained through contactable inboxes API or via generated.<br/><br/>Website: Chatwoot generated string which can be obtained from webhook events. <br/> Phone Channels(Twilio): Phone number in e164 format <br/> Email Channels: Contact Email address <br/> API Channel: Any Random String"
+        "description": "Id of the session for which the conversation is created.\n\n\n\n Source Ids can be obtained through contactable inboxes API or via generated.<br/><br/>Website: Encarta generated string which can be obtained from webhook events. <br/> Phone Channels(Twilio): Phone number in e164 format <br/> Email Channels: Contact Email address <br/> API Channel: Any Random String"
       },
       "contact_sort_param": {
         "in": "query",

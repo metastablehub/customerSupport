@@ -1,0 +1,18 @@
+{
+  "name": "chatwoot-oneuptime-integration",
+  "version": "1.0.0",
+  "description": "Middleware integration between Chatwoot and OneUptime for incident management",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "private": true,
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1"
+  }
+}

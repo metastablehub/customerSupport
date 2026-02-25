@@ -38,6 +38,12 @@ const tailwindConfig = {
   ],
   theme: {
     extend: {
+      borderRadius: {
+        DEFAULT: '0.5rem',
+      },
+      spacing: {
+        19: '4.75rem',
+      },
       fontFamily: {
         sans: defaultSansFonts,
         inter: ['Inter', ...defaultSansFonts],

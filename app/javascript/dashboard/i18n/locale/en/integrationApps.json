@@ -1,7 +1,7 @@
 {
   "INTEGRATION_APPS": {
-    "FETCHING": "Fetching Integrations",
-    "NO_HOOK_CONFIGURED": "There are no {integrationId} integrations configured in this account.",
+    "FETCHING": "Fetching integrations",
+    "NO_HOOK_CONFIGURED": "No {integrationId} integrations have been configured in this account.",
     "HEADER": "Applications",
     "STATUS": {
       "ENABLED": "Enabled",
@@ -15,21 +15,21 @@
         "ACCOUNT": "Disconnect"
       },
       "MESSAGE": {
-        "INBOX": "Are you sure to delete?",
-        "ACCOUNT": "Are you sure to disconnect?"
+        "INBOX": "Are you sure you want to delete?",
+        "ACCOUNT": "Are you sure you want to disconnect?"
       },
       "CONFIRM_BUTTON_TEXT": {
-        "INBOX": "Yes, Delete",
-        "ACCOUNT": "Yes, Disconnect"
+        "INBOX": "Yes, delete",
+        "ACCOUNT": "Yes, disconnect"
       },
       "CANCEL_BUTTON_TEXT": "Cancel",
       "API": {
         "SUCCESS_MESSAGE": "Hook deleted successfully",
-        "ERROR_MESSAGE": "Could not connect to Woot Server, Please try again later"
+        "ERROR_MESSAGE": "Could not connect to Woot server, please try again later"
       }
     },
     "LIST": {
-      "FETCHING": "Fetching integration hooks",
+      "FETCHING": "Fetching hooks",
       "INBOX": "Inbox",
       "DELETE": {
         "BUTTON_TEXT": "Delete"
@@ -38,15 +38,15 @@
     "ADD": {
       "FORM": {
         "INBOX": {
-          "LABEL": "Select Inbox",
-          "PLACEHOLDER": "Select Inbox"
+          "LABEL": "Select inbox",
+          "PLACEHOLDER": "Select inbox"
         },
         "SUBMIT": "Create",
         "CANCEL": "Cancel"
       },
       "API": {
         "SUCCESS_MESSAGE": "Integration hook added successfully",
-        "ERROR_MESSAGE": "Could not connect to Woot Server, Please try again later"
+        "ERROR_MESSAGE": "Could not connect to Woot server, please try again later"
       }
     },
     "CONNECT": {
@@ -56,7 +56,8 @@
       "BUTTON_TEXT": "Disconnect"
     },
     "SIDEBAR_DESCRIPTION": {
-      "DIALOGFLOW": "Dialogflow is a natural language processing platform for building conversational interfaces. Integrating it with {installationName} lets bots handle queries first and transfer them to agents when needed. It helps qualify leads and reduce agent workload by answering FAQs. To add Dialogflow, create a Service Account in Google Console and share the credentials. Refer to the docs for details"
+      "DIALOGFLOW": "Dialogflow is a natural language processing platform for building conversational interfaces. Integrating it with {installationName} lets bots handle queries first and transfer them to agents when needed. It helps qualify leads and reduce agent workload by answering FAQs. To add Dialogflow, create a Service Account in Google Console and share the credentials. Refer to the docs for details",
+      "ONEUPTIME": "Encarta On-Call is an incident management platform. Connect your Encarta On-Call project to create and track incidents directly from conversations."
     }
   }
 }

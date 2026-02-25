@@ -61,7 +61,11 @@ const emitNewAccount = () => {
         :title="currentAccount.name"
         @click="toggle"
       >
-        <Logo class="size-7" />
+        <img
+          :src="'/brand-assets/wheat.png'"
+          alt="Encarta"
+          class="size-8 object-contain"
+        />
       </button>
       <!-- Expanded view: Account name trigger -->
       <button

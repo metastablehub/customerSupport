@@ -284,3 +284,44 @@ leadsquared:
       'conversation_activity_score',
       'transcript_activity_score',
     ]
+oneuptime:
+  id: oneuptime
+  logo: oneuptime.png
+  logo_dark: oneuptime-dark.png
+  i18n_key: oneuptime
+  action:
+  hook_type: account
+  allow_multiple_hooks: false
+  settings_json_schema:
+    {
+      'type': 'object',
+      'properties':
+        {
+          'base_url': { 'type': 'string' },
+          'project_id': { 'type': 'string' },
+          'api_key': { 'type': 'string' },
+        },
+      'required': ['base_url', 'project_id', 'api_key'],
+    }
+  settings_form_schema:
+    [
+      {
+        'label': 'Encarta On-Call Base URL',
+        'type': 'text',
+        'name': 'base_url',
+        'placeholder': 'https://oncall.example.com',
+      },
+      {
+        'label': 'Project ID',
+        'type': 'text',
+        'name': 'project_id',
+        'placeholder': 'Your Encarta On-Call Project ID',
+      },
+      {
+        'label': 'API Key',
+        'type': 'text',
+        'name': 'api_key',
+        'placeholder': 'Your Encarta On-Call API Key',
+      },
+    ]
+  visible_properties: ['base_url', 'project_id', 'api_key']
