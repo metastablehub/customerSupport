@@ -63,6 +63,10 @@ curl -sL https://github.com/metastablehub/customerSupport/archive/refs/heads/mas
 ```
 
 ### Step 2: Run the install script
+Login to GHCR from your current VM:
+```bash
+echo YOUR_GITHUB_TOKEN | docker login ghcr.io -u metastablehub --password-stdin
+```
 
 ```bash
 chmod +x install.sh
