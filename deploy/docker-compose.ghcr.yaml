@@ -95,10 +95,11 @@ services:
     depends_on:
       rails:
         condition: service_healthy
+    ports:
+      - "4000:4000"
     environment:
       CHATWOOT_BASE_URL: http://rails:3000
       CHATWOOT_API_TOKEN: ${CHATWOOT_API_TOKEN:-placeholder}
-      CHATWOOT_ACCOUNT_ID: ${CHATWOOT_ACCOUNT_ID:-1}
       PORT: "4000"
       POLL_INTERVAL_MS: ${POLL_INTERVAL_MS:-30000}
       HOOK_REFRESH_MS: ${HOOK_REFRESH_MS:-300000}

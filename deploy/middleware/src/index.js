@@ -1,5 +1,6 @@
 const express = require("express");
 const config = require("./config");
+const { resolveAccountId } = require("./config");
 const { handleWebhook } = require("./handlers/webhook");
 const poller = require("./workers/incident-poller");
 const tracker = require("./workers/incident-tracker");
@@ -22,13 +23,40 @@ app.get("/health", async (_req, res) => {
 
   res.json({
     status: "ok",
+    account_id: config.chatwoot.accountId,
     oneuptime_connected: oneuptimeConnected,
     tracked_incidents: tracker.size(),
     uptime: process.uptime(),
   });
 });
 
+const MAX_BOOT_RETRIES = 30;
+const BOOT_RETRY_INTERVAL_MS = 10_000;
+
 async function boot() {
+  for (let attempt = 1; attempt <= MAX_BOOT_RETRIES; attempt++) {
+    try {
+      await resolveAccountId();
+      break;
+    } catch (err) {
+      console.warn(
+        `[integration] Attempt ${attempt}/${MAX_BOOT_RETRIES} — ` +
+          "failed to resolve account ID: " + err.message
+      );
+      if (attempt === MAX_BOOT_RETRIES) {
+        console.error(
+          "[integration] Exhausted retries. Ensure CHATWOOT_API_TOKEN is " +
+            "valid and Rails is reachable at " + config.chatwoot.baseUrl
+        );
+        process.exit(1);
+      }
+      console.warn(
+        `[integration] Retrying in ${BOOT_RETRY_INTERVAL_MS / 1000}s...`
+      );
+      await new Promise(r => setTimeout(r, BOOT_RETRY_INTERVAL_MS));
+    }
+  }
+
   try {
     await hookSettings.getOneUptimeConfig();
     console.log("[integration] OneUptime credentials loaded from Chatwoot integration settings");

@@ -5,6 +5,11 @@ let lastFetch = 0;
 let refreshTimer = null;
 
 async function fetchFromChatwoot() {
+  if (!config.chatwoot.accountId) {
+    throw new Error(
+      "Account ID has not been resolved yet. Call resolveAccountId() first."
+    );
+  }
   const base = config.chatwoot.baseUrl;
   const acctId = config.chatwoot.accountId;
   const url = `${base}/api/v1/accounts/${acctId}/integrations/apps/oneuptime`;
@@ -37,8 +42,13 @@ async function fetchFromChatwoot() {
     );
   }
 
+  let baseUrl = settings.base_url.replace(/\/+$/, "");
+  if (!/^https?:\/\//i.test(baseUrl)) {
+    baseUrl = "http://" + baseUrl;
+  }
+
   return {
-    baseUrl: settings.base_url.replace(/\/+$/, ""),
+    baseUrl,
     projectId: settings.project_id,
     apiKey: settings.api_key,
   };

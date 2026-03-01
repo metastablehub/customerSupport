@@ -18,6 +18,10 @@ export default {
       type: String,
       required: true,
     },
+    hookToEdit: {
+      type: Object,
+      default: null,
+    },
   },
   emits: ['close'],
   setup(props) {
@@ -36,6 +40,24 @@ export default {
     };
   },
   computed: {
+    isEditMode() {
+      return !!this.hookToEdit;
+    },
+    modalTitle() {
+      return this.isEditMode
+        ? `Edit ${this.integration.name}`
+        : this.integration.name;
+    },
+    submitLabel() {
+      return this.isEditMode
+        ? 'Update'
+        : this.$t('INTEGRATION_APPS.ADD.FORM.SUBMIT');
+    },
+    isSubmitting() {
+      return this.isEditMode
+        ? this.uiFlags.isUpdatingHook
+        : this.uiFlags.isCreatingHook;
+    },
     ...mapGetters({
       uiFlags: 'integrations/getUIFlags',
       dialogFlowEnabledInboxes: 'inboxes/dialogFlowEnabledInboxes',
@@ -64,9 +86,25 @@ export default {
       return this.integration.id === 'dialogflow';
     },
   },
+  mounted() {
+    if (this.hookToEdit && this.hookToEdit.settings) {
+      this.values = { ...this.hookToEdit.settings };
+    }
+  },
   methods: {
     onClose() {
       this.$emit('close');
+    },
+    normalizeUrlValue(value) {
+      if (
+        typeof value === 'string' &&
+        value.includes('.') &&
+        !/^https?:\/\//i.test(value) &&
+        !value.includes(' ')
+      ) {
+        return `http://${value}`;
+      }
+      return value;
     },
     buildHookPayload() {
       const hookPayload = {
@@ -87,6 +125,11 @@ export default {
             hookPayload.settings[item.name]
           );
         }
+        if (item.validation?.includes('url') || item.name?.includes('url')) {
+          hookPayload.settings[item.name] = this.normalizeUrlValue(
+            hookPayload.settings[item.name]
+          );
+        }
       });
 
       if (this.isHookTypeInbox && this.values.inbox) {
@@ -97,11 +140,17 @@ export default {
     },
     async submitForm() {
       try {
-        await this.$store.dispatch(
-          'integrations/createHook',
-          this.buildHookPayload()
-        );
-        this.alertMessage = this.$t('INTEGRATION_APPS.ADD.API.SUCCESS_MESSAGE');
+        const payload = this.buildHookPayload();
+        if (this.isEditMode) {
+          payload.hook_id = this.hookToEdit.id;
+          await this.$store.dispatch('integrations/updateHook', payload);
+          this.alertMessage = 'Integration updated successfully';
+        } else {
+          await this.$store.dispatch('integrations/createHook', payload);
+          this.alertMessage = this.$t(
+            'INTEGRATION_APPS.ADD.API.SUCCESS_MESSAGE'
+          );
+        }
         this.onClose();
       } catch (error) {
         const errorMessage = error?.response?.data?.message;
@@ -118,7 +167,7 @@ export default {
 <template>
   <div class="flex flex-col h-auto overflow-auto integration-hooks">
     <woot-modal-header
-      :header-title="integration.name"
+      :header-title="modalTitle"
       :header-content="replaceInstallationName(integration.short_description)"
     />
     <FormKit
@@ -154,8 +203,8 @@ export default {
         />
         <NextButton
           type="submit"
-          :label="$t('INTEGRATION_APPS.ADD.FORM.SUBMIT')"
-          :is-loading="uiFlags.isCreatingHook"
+          :label="submitLabel"
+          :is-loading="isSubmitting"
         />
       </div>
     </FormKit>

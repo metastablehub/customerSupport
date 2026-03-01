@@ -95,23 +95,15 @@ Open `http://<YOUR_VM_IP>:3000` in your browser.
 
 ### Step 4: Post-install configuration
 
-1. **Create your admin account** at the sign-up page
-2. Go to **Settings → Profile** and create an **Access Token**
-3. Edit `.env`:
-   ```bash
-   nano .env
-   # Set these two values:
-   # CHATWOOT_API_TOKEN=<your-token>
-   # CHATWOOT_ACCOUNT_ID=1
-   ```
-4. Restart the middleware:
-   ```bash
-   docker compose -f docker-compose.ghcr.yaml restart middleware
-   ```
-5. Register the webhook: **Settings → Integrations → Webhooks → Add**
-   - URL: `http://middleware:4000/webhook`
-   - Events: **Message Created**
-6. Configure On-Call: **Settings → Integrations → Encarta On-Call**
+The install script automatically:
+- Creates your admin account (you'll be prompted to do this during install)
+- Generates an API token and writes it to `.env`
+- Registers the webhook for the middleware
+
+After install completes:
+
+1. Configure On-Call: **Settings → Integrations → Encarta On-Call**
+   - Enter your OneUptime base URL, project ID, and API key
 
 ### Operations (Pre-built)
 
@@ -171,7 +163,9 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/app/login
 
 ### Step 4: Post-install configuration
 
-Same as [Production Install Step 4](#step-4-post-install-configuration) above.
+The setup script automatically configures the API token and webhook (same as production install). After setup completes:
+
+1. Configure On-Call: **Settings → Integrations → Encarta On-Call**
 
 ### Making Code Changes
 
@@ -257,8 +251,7 @@ See `.env.example` for the full list with comments. Key variables:
 | `POSTGRES_PASSWORD` | Yes | Database password (auto-generated) |
 | `REDIS_PASSWORD` | Yes | Redis password (auto-generated) |
 | `ENCARTA_PORT` | No | Host port to expose (default: 3000) |
-| `CHATWOOT_API_TOKEN` | After setup | API token for the On-Call middleware |
-| `CHATWOOT_ACCOUNT_ID` | After setup | Account ID for the middleware |
+| `CHATWOOT_API_TOKEN` | Auto-generated | API token for the On-Call middleware |
 | `SMTP_*` | For email | SMTP configuration for notifications |
 
 ---
@@ -278,7 +271,8 @@ See `.env.example` for the full list with comments. Key variables:
 - Rebuild without cache: `docker compose build --no-cache`
 
 **Middleware not connecting**
-- Ensure `CHATWOOT_API_TOKEN` is set in `.env`
+- Ensure `CHATWOOT_API_TOKEN` is set in `.env` (auto-generated during install)
+- The account ID is auto-discovered from the API token — no manual config needed
 - Restart: `docker compose restart middleware`
 - Check: `docker compose logs middleware`
 

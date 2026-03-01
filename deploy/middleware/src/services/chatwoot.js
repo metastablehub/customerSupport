@@ -1,14 +1,24 @@
 const config = require("../config");
 
-const BASE = `${config.chatwoot.baseUrl}/api/v1/accounts/${config.chatwoot.accountId}`;
-const HEADERS = {
-  "Content-Type": "application/json",
-  api_access_token: config.chatwoot.apiToken,
-};
+function getBaseUrl() {
+  if (!config.chatwoot.accountId) {
+    throw new Error(
+      "Account ID has not been resolved yet. Call resolveAccountId() first."
+    );
+  }
+  return `${config.chatwoot.baseUrl}/api/v1/accounts/${config.chatwoot.accountId}`;
+}
+
+function getHeaders() {
+  return {
+    "Content-Type": "application/json",
+    api_access_token: config.chatwoot.apiToken,
+  };
+}
 
 async function request(method, path, body) {
-  const url = `${BASE}${path}`;
-  const opts = { method, headers: HEADERS };
+  const url = `${getBaseUrl()}${path}`;
+  const opts = { method, headers: getHeaders() };
   if (body) opts.body = JSON.stringify(body);
 
   const res = await fetch(url, opts);

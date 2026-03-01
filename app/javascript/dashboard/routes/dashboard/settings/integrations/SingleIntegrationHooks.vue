@@ -11,7 +11,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(['add', 'delete']);
+defineEmits(['add', 'delete', 'edit']);
 
 const { integration, hasConnectedHooks } = useIntegrationHook(
   props.integrationId
@@ -43,8 +43,14 @@ const { replaceInstallationName } = useBranding();
           {{ replaceInstallationName(integration.description) }}
         </p>
       </div>
-      <div class="flex justify-center items-center mb-0 w-[15%]">
-        <div v-if="hasConnectedHooks">
+      <div class="flex justify-center items-center mb-0 gap-2">
+        <div v-if="hasConnectedHooks" class="flex gap-2">
+          <Button
+            blue
+            faded
+            label="Edit"
+            @click="$emit('edit', integration.hooks[0])"
+          />
           <div @click="$emit('delete', integration.hooks[0])">
             <Button
               ruby

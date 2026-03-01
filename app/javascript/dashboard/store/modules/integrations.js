@@ -12,6 +12,7 @@ const state = {
     isFetchingItem: false,
     isUpdating: false,
     isCreatingHook: false,
+    isUpdatingHook: false,
     isDeletingHook: false,
     isCreatingSlack: false,
     isUpdatingSlack: false,
@@ -124,6 +125,17 @@ export const actions = {
       throw new Error(error);
     }
   },
+  updateHook: async ({ commit }, hookData) => {
+    commit(types.default.SET_INTEGRATIONS_UI_FLAG, { isUpdatingHook: true });
+    try {
+      const response = await IntegrationsAPI.updateHook(hookData);
+      commit(types.default.UPDATE_INTEGRATION_HOOKS, response.data);
+      commit(types.default.SET_INTEGRATIONS_UI_FLAG, { isUpdatingHook: false });
+    } catch (error) {
+      commit(types.default.SET_INTEGRATIONS_UI_FLAG, { isUpdatingHook: false });
+      throw new Error(error);
+    }
+  },
   deleteHook: async ({ commit }, { appId, hookId }) => {
     commit(types.default.SET_INTEGRATIONS_UI_FLAG, { isDeletingHook: true });
     try {
@@ -150,6 +162,19 @@ export const mutations = {
         return {
           ...record,
           hooks: [...record.hooks, data],
+        };
+      }
+      return record;
+    });
+  },
+  [types.default.UPDATE_INTEGRATION_HOOKS]: ($state, data) => {
+    $state.records = $state.records.map(record => {
+      if (record.id === data.app_id) {
+        return {
+          ...record,
+          hooks: record.hooks.map(hook =>
+            hook.id === data.id ? { ...hook, ...data } : hook
+          ),
         };
       }
       return record;

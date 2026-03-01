@@ -36,6 +36,11 @@ if [ -z "$FRONTEND_URL" ]; then
   exit 1
 fi
 
+if [[ ! "$FRONTEND_URL" =~ ^https?:// ]]; then
+  FRONTEND_URL="http://$FRONTEND_URL"
+  echo "  (auto-prepended http:// → $FRONTEND_URL)"
+fi
+
 read -rp "Port to expose Encarta on [3000]: " ENCARTA_PORT
 ENCARTA_PORT="${ENCARTA_PORT:-3000}"
 
@@ -116,19 +121,66 @@ fi
 
 echo
 echo "========================================="
+echo "  Encarta is running!"
+echo "========================================="
+echo
+echo "  Open $FRONTEND_URL and create your admin account."
+echo
+read -rp "  Press ENTER after you have created your admin account..."
+
+echo
+echo "  Auto-configuring the On-Call middleware..."
+
+RAILS_CONTAINER=$(docker compose -f "$COMPOSE_FILE" ps -q rails 2>/dev/null | head -1)
+if [ -z "$RAILS_CONTAINER" ]; then
+  echo "WARNING: Could not find the Rails container. Skipping auto-config."
+  echo "You will need to manually set CHATWOOT_API_TOKEN in $ENV_FILE."
+else
+  API_TOKEN=$(docker exec "$RAILS_CONTAINER" bundle exec rails runner \
+    "u = User.order(:id).first; puts u&.access_token&.token || (u&.create_access_token && u.access_token.reload.token)" 2>/dev/null | tail -1)
+
+  if [ -z "$API_TOKEN" ] || [ "$API_TOKEN" = "nil" ]; then
+    echo "WARNING: Could not retrieve an API token automatically."
+    echo "Please set CHATWOOT_API_TOKEN manually in $ENV_FILE."
+  else
+    replace_env "CHATWOOT_API_TOKEN" "$API_TOKEN"
+    echo "  API token written to .env"
+
+    echo "  Restarting middleware with new token..."
+    docker compose -f "$COMPOSE_FILE" up -d middleware >/dev/null 2>&1
+
+    sleep 5
+
+    ACCT_ID=$(docker exec "$RAILS_CONTAINER" bundle exec rails runner \
+      "u = User.order(:id).first; puts u.account_users.first&.account_id" 2>/dev/null | tail -1)
+
+    if [ -n "$ACCT_ID" ] && [ "$ACCT_ID" != "nil" ]; then
+      echo "  Registering webhook for account $ACCT_ID..."
+      curl -s -X POST \
+        -H "api_access_token: $API_TOKEN" \
+        -H "Content-Type: application/json" \
+        "http://localhost:${ENCARTA_PORT}/api/v1/accounts/${ACCT_ID}/webhooks" \
+        -d "{\"webhook\":{\"url\":\"http://middleware:4000/webhook\",\"subscriptions\":[\"message_created\"]}}" >/dev/null 2>&1
+      echo "  Webhook registered."
+    else
+      echo "  WARNING: Could not determine account ID for webhook registration."
+      echo "  Register the webhook manually: Settings > Integrations > Webhooks"
+      echo "    URL: http://middleware:4000/webhook"
+      echo "    Events: message_created"
+    fi
+  fi
+fi
+
+echo
+echo "========================================="
 echo "  Install Complete"
 echo "========================================="
 echo
 echo "  Encarta is available at: $FRONTEND_URL"
 echo
 echo "  NEXT STEPS:"
-echo "  1. Open $FRONTEND_URL and create your admin account"
-echo "  2. Go to Settings > Profile and create an Access Token"
-echo "  3. Edit $ENV_FILE and set:"
-echo "       CHATWOOT_API_TOKEN=<your token>"
-echo "       CHATWOOT_ACCOUNT_ID=<your account id>"
-echo "  4. Restart the middleware:"
-echo "       cd $DEPLOY_DIR && docker compose -f $COMPOSE_FILE restart middleware"
+echo "  1. Configure On-Call credentials:"
+echo "       Settings > Integrations > Encarta On-Call"
 echo
 echo "  Useful commands:"
 echo "    docker compose -f $COMPOSE_FILE logs -f"
