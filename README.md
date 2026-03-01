@@ -1,139 +1,293 @@
-<img src="./.github/screenshots/header.png#gh-light-mode-only" width="100%" alt="Header light mode"/>
-<img src="./.github/screenshots/header-dark.png#gh-dark-mode-only" width="100%" alt="Header dark mode"/>
+# Encarta — Installation Guide
 
-___
+Complete step-by-step guide for installing Encarta on a new VM.
 
-# Chatwoot
-
-The modern customer support platform, an open-source alternative to Intercom, Zendesk, Salesforce Service Cloud etc.
-
-<p>
-  <img src="https://img.shields.io/circleci/build/github/chatwoot/chatwoot" alt="CircleCI Badge">
-    <a href="https://hub.docker.com/r/chatwoot/chatwoot/"><img src="https://img.shields.io/docker/pulls/chatwoot/chatwoot" alt="Docker Pull Badge"></a>
-  <a href="https://hub.docker.com/r/chatwoot/chatwoot/"><img src="https://img.shields.io/docker/cloud/build/chatwoot/chatwoot" alt="Docker Build Badge"></a>
-  <img src="https://img.shields.io/github/commit-activity/m/chatwoot/chatwoot" alt="Commits-per-month">
-  <a title="Crowdin" target="_self" href="https://chatwoot.crowdin.com/chatwoot"><img src="https://badges.crowdin.net/e/37ced7eba411064bd792feb3b7a28b16/localized.svg"></a>
-  <a href="https://discord.gg/cJXdrwS"><img src="https://img.shields.io/discord/647412545203994635" alt="Discord"></a>
-  <a href="https://status.chatwoot.com"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fchatwoot%2Fstatus%2Fmaster%2Fapi%2Fchatwoot%2Fuptime.json" alt="uptime"></a>
-  <a href="https://status.chatwoot.com"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fchatwoot%2Fstatus%2Fmaster%2Fapi%2Fchatwoot%2Fresponse-time.json" alt="response time"></a>
-  <a href="https://artifacthub.io/packages/helm/chatwoot/chatwoot"><img src="https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/artifact-hub" alt="Artifact HUB"></a>
-</p>
-
-
-<p>
-  <a href="https://heroku.com/deploy?template=https://github.com/chatwoot/chatwoot/tree/master" alt="Deploy to Heroku">
-     <img width="150" alt="Deploy" src="https://www.herokucdn.com/deploy/button.svg"/>
-  </a>
-  <a href="https://marketplace.digitalocean.com/apps/chatwoot?refcode=f2238426a2a8" alt="Deploy to DigitalOcean">
-     <img width="200" alt="Deploy to DO" src="https://www.deploytodo.com/do-btn-blue.svg"/>
-  </a>
-</p>
-
-<img src="./.github/screenshots/dashboard.png#gh-light-mode-only" width="100%" alt="Chat dashboard dark mode"/>
-<img src="./.github/screenshots/dashboard-dark.png#gh-dark-mode-only" width="100%" alt="Chat dashboard"/>
+| Option | Use case | Build required? | Time |
+|--------|----------|-----------------|------|
+| **[Option 1: Pre-built Images](#option-1-deploy-pre-built-images-quick-install-5-minutes)** | Deploy to a server as-is | No (pulls from GHCR) | ~5 minutes |
+| **[Option 2: Development Setup](#option-2-development-setup-full-source-20-30-minutes)** | Modify code, test, rebuild | Yes (builds locally) | ~20-30 minutes |
 
 ---
 
-Chatwoot is the modern, open-source, and self-hosted customer support platform designed to help businesses deliver exceptional customer support experience. Built for scale and flexibility, Chatwoot gives you full control over your customer data while providing powerful tools to manage conversations across channels.
+## Prerequisites (Both Options)
 
-### ✨ Captain – AI Agent for Support
+- **Linux VM**: Ubuntu 22.04+ recommended
+- **RAM**: 4 GB minimum (8 GB for development builds)
+- **Docker**: Engine 24+ with Docker Compose v2
+- **Firewall**: Port 3000 open for inbound TCP traffic
 
-Supercharge your support with Captain, Chatwoot’s AI agent. Captain helps automate responses, handle common queries, and reduce agent workload—ensuring customers get instant, accurate answers. With Captain, your team can focus on complex conversations while routine questions are resolved automatically. Read more about Captain [here](https://chwt.app/captain-docs).
+### Install Docker (if not already installed)
 
-### 💬 Omnichannel Support Desk
+```bash
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+# Log out and back in, then verify:
+docker --version
+docker compose version
+```
 
-Chatwoot centralizes all customer conversations into one powerful inbox, no matter where your customers reach out from. It supports live chat on your website, email, Facebook, Instagram, Twitter, WhatsApp, Telegram, Line, SMS etc.
+### Open Firewall Port
 
-### 📚 Help center portal
+| Cloud | How |
+|-------|-----|
+| **GCP** | VPC Network → Firewall → Create Rule → Ingress, TCP 3000, Source `0.0.0.0/0` |
+| **AWS** | Security Group → Inbound Rule → TCP 3000, Source `0.0.0.0/0` |
+| **Azure** | NSG → Add Inbound Rule → TCP 3000 |
 
-Publish help articles, FAQs, and guides through the built-in Help Center Portal. Enable customers to find answers on their own, reduce repetitive queries, and keep your support team focused on more complex issues.
+---
 
-### 🗂️ Other features
+## Option 1: Deploy Pre-built Images (Quick Install, ~5 minutes)
 
-#### Collaboration & Productivity
+This pulls ready-made Docker images from GHCR. No source code compilation needed.
 
-- Private Notes and @mentions for internal team discussions.
-- Labels to organize and categorize conversations.
-- Keyboard Shortcuts and a Command Bar for quick navigation.
-- Canned Responses to reply faster to frequently asked questions.
-- Auto-Assignment to route conversations based on agent availability.
-- Multi-lingual Support to serve customers in multiple languages.
-- Custom Views and Filters for better inbox organization.
-- Business Hours and Auto-Responders to manage response expectations.
-- Teams and Automation tools for scaling support workflows.
-- Agent Capacity Management to balance workload across the team.
+### Step 1 — Download the deploy folder only
 
-#### Customer Data & Segmentation
-- Contact Management with profiles and interaction history.
-- Contact Segments and Notes for targeted communication.
-- Campaigns to proactively engage customers.
-- Custom Attributes for storing additional customer data.
-- Pre-Chat Forms to collect user information before starting conversations.
+```bash
+git clone --depth 1 --filter=blob:none --sparse \
+  https://github.com/metastablehub/customerSupport.git encarta-install
+cd encarta-install
+git sparse-checkout set deploy
+cd deploy
+```
 
-#### Integrations
-- Slack Integration to manage conversations directly from Slack.
-- Dialogflow Integration for chatbot automation.
-- Dashboard Apps to embed internal tools within Chatwoot.
-- Shopify Integration to view and manage customer orders right within Chatwoot.
-- Use Google Translate to translate messages from your customers in realtime.
-- Create and manage Linear tickets within Chatwoot.
+### Step 2 — Login to GHCR
 
-#### Reports & Insights
-- Live View of ongoing conversations for real-time monitoring.
-- Conversation, Agent, Inbox, Label, and Team Reports for operational visibility.
-- CSAT Reports to measure customer satisfaction.
-- Downloadable Reports for offline analysis and reporting.
+The Docker images are hosted on GitHub Container Registry. You need a GitHub token with `read:packages` scope:
 
+```bash
+echo YOUR_GITHUB_TOKEN | docker login ghcr.io -u metastablehub --password-stdin
+```
 
-## Documentation
+### Step 3 — Run the install script
 
-Detailed documentation is available at [chatwoot.com/help-center](https://www.chatwoot.com/help-center).
+```bash
+chmod +x install.sh
+./install.sh
+```
 
-## Translation process
+The script will interactively:
 
-The translation process for Chatwoot web and mobile app is managed at [https://translate.chatwoot.com](https://translate.chatwoot.com) using Crowdin. Please read the [translation guide](https://www.chatwoot.com/docs/contributing/translating-chatwoot-to-your-language) for contributing to Chatwoot.
+1. Ask for your **public URL** (e.g. `http://YOUR_VM_IP:3000`) — if you forget the `http://`, it auto-prepends it
+2. Ask for the **port** (default: 3000)
+3. Auto-generate all secrets (database passwords, Rails keys, encryption keys)
+4. Pull the pre-built images from GHCR
+5. Start all 6 services (Postgres, Redis, Rails, Sidekiq, rails-init, Middleware)
+6. Wait for Rails to become healthy (~1-2 minutes)
+7. Prompt: **"Open the URL and create your admin account"** — do this in your browser, then press Enter
+8. Auto-retrieve your API token from the database and write it to `.env`
+9. Auto-register the webhook for the middleware
+10. Print "Install Complete"
 
-## Branching model
+### Step 4 — Configure the On-Call integration
 
-We use the [git-flow](https://nvie.com/posts/a-successful-git-branching-model/) branching model. The base branch is `develop`.
-If you are looking for a stable version, please use the `master` or tags labelled as `v1.x.x`.
+1. Open `http://YOUR_VM_IP:3000` in your browser
+2. Go to **Settings → Integrations → Encarta On-Call**
+3. Enter your OneUptime details:
+   - **Base URL** (e.g. `http://34.123.182.39` or `https://oneuptime.example.com`)
+   - **Project ID**
+   - **API Key**
+4. Click Connect
 
-## Deployment
+### Step 5 — Verify everything works
 
-### Heroku one-click deploy
+```bash
+# All containers should show "healthy" or "running"
+docker compose -f docker-compose.ghcr.yaml ps
 
-Deploying Chatwoot to Heroku is a breeze. It's as simple as clicking this button:
+# Test the app
+curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/app/login
+# Expected: 200
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/chatwoot/chatwoot/tree/master)
+# Test the middleware
+curl -s http://localhost:4000/health
+# Expected: {"status":"ok","account_id":1, ...}
+```
 
-Follow this [link](https://www.chatwoot.com/docs/environment-variables) to understand setting the correct environment variables for the app to work with all the features. There might be breakages if you do not set the relevant environment variables.
+### Useful commands (Pre-built)
 
+```bash
+# View logs (all services)
+docker compose -f docker-compose.ghcr.yaml logs -f
 
-### DigitalOcean 1-Click Kubernetes deployment
+# View middleware logs only
+docker compose -f docker-compose.ghcr.yaml logs -f middleware
 
-Chatwoot now supports 1-Click deployment to DigitalOcean as a kubernetes app.
+# Restart everything
+docker compose -f docker-compose.ghcr.yaml restart
 
-<a href="https://marketplace.digitalocean.com/apps/chatwoot?refcode=f2238426a2a8" alt="Deploy to DigitalOcean">
-  <img width="200" alt="Deploy to DO" src="https://www.deploytodo.com/do-btn-blue.svg"/>
-</a>
+# Stop everything (data preserved)
+docker compose -f docker-compose.ghcr.yaml down
 
-### Other deployment options
+# Update to latest images
+docker compose -f docker-compose.ghcr.yaml pull
+docker compose -f docker-compose.ghcr.yaml up -d
 
-For other supported options, checkout our [deployment page](https://chatwoot.com/deploy).
+# Stop and DELETE all data
+docker compose -f docker-compose.ghcr.yaml down -v
+```
 
-## Security
+---
 
-Looking to report a vulnerability? Please refer our [SECURITY.md](./SECURITY.md) file.
+## Option 2: Development Setup (Full Source, ~20-30 minutes)
 
-## Community
+This clones the entire source code and builds Docker images locally. Use this when you need to make changes to the Encarta codebase.
 
-If you need help or just want to hang out, come, say hi on our [Discord](https://discord.gg/cJXdrwS) server.
+**Additional prerequisites:** 8 GB RAM minimum, ~10 GB disk space for source + Docker images.
 
-## Contributors
+### Step 1 — Clone the full repository
 
-Thanks goes to all these [wonderful people](https://www.chatwoot.com/docs/contributors):
+```bash
+git clone https://github.com/metastablehub/customerSupport.git encarta-install
+cd encarta-install/deploy
+```
 
-<a href="https://github.com/chatwoot/chatwoot/graphs/contributors"><img src="https://opencollective.com/chatwoot/contributors.svg?width=890&button=false" /></a>
+### Step 2 — Run the setup script
 
+```bash
+chmod +x setup.sh
+./setup.sh
+```
 
-*Chatwoot* &copy; 2017-2026, Chatwoot Inc - Released under the MIT License.
+The script will interactively:
+
+1. Ask for your **public URL**
+2. Ask for the **path to Encarta source tree** (default: parent directory — correct if you're in `deploy/`)
+3. Ask for the **port** (default: 3000)
+4. Auto-generate all secrets
+5. **Build Docker images from source** (~20-30 minutes first time; gem install + asset precompilation)
+6. Start all services
+7. Wait for Rails to become healthy
+8. Prompt: **"Create your admin account"** — do this in your browser, then press Enter
+9. Auto-configure API token and webhook (same as production)
+
+### Step 3 — Configure On-Call integration
+
+Same as Option 1, Step 4.
+
+### Step 4 — Verify
+
+```bash
+docker compose ps
+
+curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/app/login
+# Expected: 200
+
+curl -s http://localhost:4000/health
+# Expected: {"status":"ok", ...}
+```
+
+### Making code changes
+
+After editing source files (Vue components, Rails models, etc.):
+
+```bash
+cd deploy
+
+# Rebuild and restart (uses Docker cache, much faster than first build)
+docker compose build
+docker compose up -d
+```
+
+For **middleware-only changes** (files in `deploy/middleware/src/`):
+
+```bash
+cd deploy
+docker compose build middleware
+docker compose up -d middleware
+```
+
+### Useful commands (Development)
+
+```bash
+# View all logs
+docker compose logs -f
+
+# View specific service
+docker compose logs -f rails
+docker compose logs -f middleware
+
+# Rails console (for debugging)
+docker compose exec rails bundle exec rails console
+
+# Database console
+docker compose exec postgres psql -U postgres encarta_production
+
+# Full rebuild with no cache (if something seems stale)
+docker compose build --no-cache
+docker compose up -d
+
+# Stop and DELETE all data (fresh start)
+docker compose down -v
+```
+
+---
+
+## What's Automated (Zero Manual Config)
+
+These things are fully automatic during install — no manual `.env` editing required:
+
+| What | How |
+|------|-----|
+| **API Token** | Generated from your admin account and written to `.env` during install |
+| **Account ID** | Dynamically discovered by the middleware at runtime from the API token |
+| **Webhook** | Auto-registered to `http://middleware:4000/webhook` during install |
+| **URL protocol** | Auto-prepended `http://` if you forget it (both in install script and middleware) |
+| **Middleware port** | Port 4000 already exposed in both compose files |
+
+The **only manual step** after install is configuring your OneUptime credentials in the Encarta UI.
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  Docker Compose Stack                │
+│                                                     │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
+│  │ Postgres │  │  Redis   │  │   Middleware      │  │
+│  │ (pg16)   │  │ (alpine) │  │ (On-Call :4000)   │  │
+│  └────┬─────┘  └────┬─────┘  └────────┬─────────┘  │
+│       │              │                 │             │
+│  ┌────┴──────────────┴─────────────────┴──────────┐ │
+│  │              Rails (Puma :3000)                 │ │
+│  │         Encarta Web Application                │ │
+│  └────────────────────────────────────────────────┘ │
+│  ┌────────────────────────────────────────────────┐ │
+│  │              Sidekiq                           │ │
+│  │         Background Job Processing              │ │
+│  └────────────────────────────────────────────────┘ │
+│                                                     │
+│  Exposed port: 3000 (configurable via ENCARTA_PORT) │
+└─────────────────────────────────────────────────────┘
+```
+
+| Service | Image | Port | Purpose |
+|---------|-------|------|---------|
+| postgres | pgvector/pgvector:pg16 | 5432 (internal) | Database |
+| redis | redis:alpine | 6379 (internal) | Cache and job queues |
+| rails | customersupport:v2.0-zero-config | 3000 (exposed) | Web application |
+| sidekiq | customersupport:v2.0-zero-config | — | Background jobs |
+| middleware | customersupport-middleware:v2.0-zero-config | 4000 (exposed) | On-Call integration |
+
+---
+
+## Troubleshooting
+
+**Timeout when accessing `http://<IP>:3000`**
+- Verify the port is open in your cloud provider's firewall (GCP/AWS/Azure)
+- Check locally: `curl http://localhost:3000/app/login`
+
+**Rails won't start**
+- Check logs: `docker compose logs rails`
+- Common cause: database not ready (usually resolves on retry)
+- Missing `SECRET_KEY_BASE`: re-run the install/setup script
+
+**Middleware not connecting**
+- Ensure `CHATWOOT_API_TOKEN` is set in `.env` (auto-generated during install)
+- The account ID is auto-discovered from the API token — no manual config needed
+- Restart: `docker compose restart middleware`
+- Check: `docker compose logs middleware`
+
+**Assets look wrong after code changes**
+- Rebuild without cache: `docker compose build --no-cache`
