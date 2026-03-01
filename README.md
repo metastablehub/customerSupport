@@ -102,6 +102,21 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/app/login
 curl -s http://localhost:4000/health
 # Expected: {"status":"ok","account_id":1, ...}
 ```
+### Step 6 — Configure Integration + Webhooks
+This is a 2 step process. 
+Part A:
+```bash
+Configure OUT integration: format: http://1.2.2.2:3000
+```
+Add API key and Project ID 
+
+Part B: 
+Configure Webhook
+webhook URL: 
+```bash
+http://middleware:4000/webhook
+```
+Update on message creatioon
 
 ### Useful commands (Pre-built)
 
